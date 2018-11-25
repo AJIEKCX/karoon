@@ -2,23 +2,19 @@ package com.example.ajiekc.karoon.ui.auth
 
 import android.app.Activity
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import com.example.ajiekc.karoon.Injection
 import com.example.ajiekc.karoon.LceState
 import com.example.ajiekc.karoon.R
-import com.example.ajiekc.karoon.data.AuthData
+import com.example.ajiekc.karoon.entity.AuthData
+import com.example.ajiekc.karoon.extensions.*
 import com.example.ajiekc.karoon.ui.navigation.NavigationActivity
-import com.example.ajiekc.karoon.extensions.PreferenceHelper
-import com.example.ajiekc.karoon.extensions.PreferenceHelper.get
-import com.example.ajiekc.karoon.extensions.PreferenceHelper.set
-import com.example.ajiekc.karoon.extensions.hide
-import com.example.ajiekc.karoon.extensions.show
-import com.example.ajiekc.karoon.extensions.toast
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -35,7 +31,8 @@ import com.vk.sdk.VKCallback
 import com.vk.sdk.VKSdk
 import com.vk.sdk.api.VKError
 import kotlinx.android.synthetic.main.activity_auth.*
-
+import toothpick.Scope
+import toothpick.Toothpick
 
 class AuthActivity : AppCompatActivity() {
 
@@ -46,6 +43,7 @@ class AuthActivity : AppCompatActivity() {
         }
 
         const val AUTH_TYPE_PREF = "auth_type_pref"
+        const val AUTH_TOKEN = "auth_token"
         const val USERNAME_PREF = "user_name_pref"
         const val PHOTO_URL_PREF = "photo_url_pref"
         const val RC_SIGN_IN = 9001
@@ -54,18 +52,37 @@ class AuthActivity : AppCompatActivity() {
 
     private lateinit var mFBCallbackManager: CallbackManager
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-    lateinit var mViewModel: AuthViewModel
+
+    private val scope: Scope by lazy(LazyThreadSafetyMode.NONE) {
+        Toothpick.openScopes(application, this)
+    }
+
+    private val mViewModel by lazy(LazyThreadSafetyMode.NONE) {
+        val factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return scope.getInstance(modelClass)
+            }
+        }
+
+        ViewModelProviders.of(this, factory).get(AuthViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
         skipAuthIfAlreadyLoggedIn()
-        val viewModelFactory = Injection.provideAuthViewModelFactory()
-        mViewModel = ViewModelProviders.of(this, viewModelFactory).get(AuthViewModel::class.java)
         registerSdkCallbacks()
         mViewModel.viewState.observe(this, Observer {
             renderState(it)
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (isFinishing) {
+            Toothpick.closeScope(this)
+        }
     }
 
     private fun skipAuthIfAlreadyLoggedIn() {
@@ -120,7 +137,7 @@ class AuthActivity : AppCompatActivity() {
 
     fun onLoginButtonClick(view: View) {
         when (view.id) {
-            R.id.vk_button -> VKSdk.login(this)
+            R.id.vk_button -> VKSdk.login(this, "wall", "friends")
             R.id.fb_button -> LoginManager.getInstance()
                     .logInWithReadPermissions(this, arrayListOf("public_profile"))
             R.id.google_button -> signIn()
@@ -162,7 +179,7 @@ class AuthActivity : AppCompatActivity() {
         override fun onResult(res: VKAccessToken) {
             Log.d(TAG, "onResult VK: ${res.accessToken}")
             mViewModel.getUserData(AuthType.VK, res.accessToken, res.userId)
-            setAuthSuccess(AuthType.VK)
+            setAuthSuccess(AuthType.VK, res.accessToken)
         }
 
         override fun onError(error: VKError?) {
@@ -186,8 +203,9 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    fun setAuthSuccess(type: AuthType) {
+    fun setAuthSuccess(type: AuthType, token: String? = "") {
         val preferences = PreferenceHelper.defaultPrefs(this)
         preferences[AUTH_TYPE_PREF] = type.name
+        preferences[AUTH_TOKEN] = token
     }
 }

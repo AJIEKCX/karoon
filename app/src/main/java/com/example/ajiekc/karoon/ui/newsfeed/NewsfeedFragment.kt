@@ -1,73 +1,34 @@
-package com.example.ajiekc.karoon.ui.search
+package com.example.ajiekc.karoon.ui.newsfeed
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SearchView
 import android.util.Log
-import android.view.*
-import com.example.ajiekc.karoon.Injection
-import com.example.ajiekc.karoon.LceState
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.example.ajiekc.karoon.R
-import com.example.ajiekc.karoon.db.User
+import com.example.ajiekc.karoon.entity.VKNewsfeed
 import com.example.ajiekc.karoon.extensions.toast
+import com.example.ajiekc.karoon.ui.base.BaseFragment
 import com.example.ajiekc.karoon.widget.LceRecyclerView
-import com.example.ajiekc.karoon.widget.RxSearchView
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 
-class SearchUsersFragment : Fragment(), UsersAdapter.RepeatButtonClickListener {
-    
+class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListener {
+
     companion object {
-        const val SEARCH_VIEW_TEXT_PREFS = "search_view_text_prefs"
-        val TAG = SearchUsersFragment::class.java.simpleName
+        val TAG = NewsfeedFragment::class.java.simpleName
     }
 
     private var mNextPageLoading = false
-    private lateinit var mAdapter: UsersAdapter
+    private lateinit var mAdapter: NewsfeedAdapter
     private lateinit var mRecyclerView: LceRecyclerView
     private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var mViewModel: SearchViewModel
-    private var mSearchViewText: String = ""
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.main, menu)
-        val searchMenuItem = menu?.findItem(R.id.action_search)
-        if (searchMenuItem != null) {
-            setupSearchView(searchMenuItem)
-        }
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    private fun setupSearchView(menuItem: MenuItem) {
-        Log.i(TAG,"setupSearchView")
-        val searchView = menuItem.actionView as SearchView
-        if (mSearchViewText.isNotEmpty()) {
-            searchView.setQuery(mSearchViewText, false)
-        }
-        searchView.queryHint = getString(R.string.search_view_hint)
-        RxSearchView.queryTextChanged(searchView)
-                .debounce(600, TimeUnit.MILLISECONDS)
-                .distinctUntilChanged()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy {filter ->
-                    Log.d(TAG,"onNext: $filter")
-                    mSearchViewText = filter
-                    mViewModel.getDataWithFilter(filter)
-                }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+    private val mViewModel by lazy(LazyThreadSafetyMode.NONE) {
+        createViewModel<NewsfeedViewModel>()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -80,7 +41,7 @@ class SearchUsersFragment : Fragment(), UsersAdapter.RepeatButtonClickListener {
             emptyView = view.findViewById(R.id.empty_text_view)
             progressView = view.findViewById(R.id.progress_view)
         }
-        mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+/*        mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val visibleItemCount = linearLayoutManager.childCount
@@ -90,20 +51,18 @@ class SearchUsersFragment : Fragment(), UsersAdapter.RepeatButtonClickListener {
                 if (visibleItemCount + pastVisibleItems >= totalItemCount && isRecyclerScrollable(recyclerView) && !mNextPageLoading) {
                     val userId = mAdapter.getLastItem()?.id
                     if (userId != null && userId > 0) {
-                        mViewModel.loadData(since = userId)
+                        //mViewModel.loadData(since = userId)
                     }
                 }
             }
-        })
-        val viewModelFactory = Injection.provideSearchViewModelFactory(context!!)
-        mViewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel::class.java)
-        mAdapter = UsersAdapter(mViewModel.dataSet)
+        })*/
+        mAdapter = NewsfeedAdapter(mViewModel.dataSet)
         mAdapter.attachToRecyclerView(mRecyclerView)
         mAdapter.setOnRepeatButtonClickListener(this)
         mViewModel.viewState().observe(this, Observer {
             renderViewState(it)
         })
-        mViewModel.loadData()
+        mViewModel.loadNews()
 
         return view
     }
@@ -117,60 +76,60 @@ class SearchUsersFragment : Fragment(), UsersAdapter.RepeatButtonClickListener {
         val color = ResourcesCompat.getColor(resources, R.color.colorAccent, null)
         mSwipeRefreshLayout.setColorSchemeColors(color)
         mSwipeRefreshLayout.setOnRefreshListener {
-            mViewModel.loadData(true)
+            //mViewModel.loadNews(true)
         }
     }
 
-    private fun renderViewState(searchState: SearchViewState?) {
-        when (searchState?.state) {
-            LceSearchState.INITIAL_LOADING -> {
+    private fun renderViewState(newsfeedState: NewsfeedViewState?) {
+        when (newsfeedState?.state) {
+            LceNewsfeedState.INITIAL_LOADING -> {
                 mSwipeRefreshLayout.isEnabled = false
                 mRecyclerView.showProgress()
                 Log.d(TAG, "INITIAL_LOADING")
             }
-            LceSearchState.LOADING_NEXT_PAGE -> {
-                mSwipeRefreshLayout.isEnabled = true
-                mNextPageLoading = true
-                if (mAdapter.isLastItemUser()) {
-                    mAdapter.add(User(type = LceState.LOADING.name))
-                } else {
-                    mAdapter.replaceLastItem(User(type = LceState.LOADING.name))
-                }
+            LceNewsfeedState.LOADING_NEXT_PAGE -> {
+                /*              mSwipeRefreshLayout.isEnabled = true
+                              mNextPageLoading = true
+                              if (mAdapter.isLastItemUser()) {
+                                  mAdapter.add(User(type = LceState.LOADING.name))
+                              } else {
+                                  mAdapter.replaceLastItem(User(type = LceState.LOADING.name))
+                              }*/
                 Log.d(TAG, "LOADING_NEXT_PAGE")
             }
-            LceSearchState.NEXT_PAGE_LOADED -> {
+            LceNewsfeedState.NEXT_PAGE_LOADED -> {
                 mSwipeRefreshLayout.isEnabled = true
                 mNextPageLoading = false
                 mAdapter.removeLastItem()
                 Log.d(TAG, "NEXT_PAGE_LOADED")
             }
-            LceSearchState.LOADING -> {
+            LceNewsfeedState.LOADING -> {
                 mSwipeRefreshLayout.isEnabled = true
                 mSwipeRefreshLayout.isRefreshing = true
                 Log.d(TAG, "LOADING")
             }
-            LceSearchState.HIDE_LOADING -> {
+            LceNewsfeedState.HIDE_LOADING -> {
                 mSwipeRefreshLayout.isEnabled = true
                 mSwipeRefreshLayout.isRefreshing = false
                 mRecyclerView.hideProgress()
                 Log.d(TAG, "HIDE_LOADING")
             }
-            LceSearchState.CONTENT -> {
+            LceNewsfeedState.CONTENT -> {
                 mSwipeRefreshLayout.isEnabled = true
                 mSwipeRefreshLayout.isRefreshing = false
                 mRecyclerView.hideProgress()
-                if(searchState.reload) {
+                if (newsfeedState.reload) {
                     mNextPageLoading = false
                 }
-                onDataReceive(searchState.data)
+                onDataReceive(newsfeedState.data)
                 Log.d(TAG, "CONTENT")
             }
-            LceSearchState.ERROR_NEXT_PAGE_LOADING -> {
-                mSwipeRefreshLayout.isEnabled = true
-                mAdapter.replaceLastItem(User(type = LceState.ERROR.name))
-                Log.d(TAG, "ERROR_NEXT_PAGE_LOADING")
+            LceNewsfeedState.ERROR_NEXT_PAGE_LOADING -> {
+                /* mSwipeRefreshLayout.isEnabled = true
+                 mAdapter.replaceLastItem(User(type = LceState.ERROR.name))
+                 Log.d(TAG, "ERROR_NEXT_PAGE_LOADING")*/
             }
-            LceSearchState.ERROR -> {
+            LceNewsfeedState.ERROR -> {
                 mSwipeRefreshLayout.isEnabled = true
                 mRecyclerView.updateView()
                 context?.toast(getString(R.string.loading_failed))
@@ -179,7 +138,7 @@ class SearchUsersFragment : Fragment(), UsersAdapter.RepeatButtonClickListener {
         }
     }
 
-    private fun onDataReceive(data: List<User>?) {
+    private fun onDataReceive(data: List<VKNewsfeed>?) {
         if (data == null) {
             return
         }
@@ -187,22 +146,12 @@ class SearchUsersFragment : Fragment(), UsersAdapter.RepeatButtonClickListener {
     }
 
     override fun onRepeatButtonClick() {
-        val count = mAdapter.itemCount
+/*        val count = mAdapter.itemCount
         if (count > 1) {
             val userId = mAdapter.getItem(count - 2).id
             if (userId != null && userId > 0) {
-                mViewModel.loadData(since = userId)
+                //mViewModel.loadData(since = userId)
             }
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_VIEW_TEXT_PREFS, mSearchViewText)
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        mSearchViewText = savedInstanceState?.getString(SEARCH_VIEW_TEXT_PREFS, "") ?: ""
+        }*/
     }
 }

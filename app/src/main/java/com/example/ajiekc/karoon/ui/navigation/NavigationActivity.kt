@@ -12,14 +12,10 @@ import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.ajiekc.karoon.R
+import com.example.ajiekc.karoon.extensions.*
 import com.example.ajiekc.karoon.ui.auth.AuthActivity
 import com.example.ajiekc.karoon.ui.auth.AuthType
-import com.example.ajiekc.karoon.ui.search.SearchUsersFragment
-import com.example.ajiekc.karoon.extensions.PreferenceHelper
-import com.example.ajiekc.karoon.extensions.PreferenceHelper.clear
-import com.example.ajiekc.karoon.extensions.PreferenceHelper.get
-import com.example.ajiekc.karoon.extensions.loadRoundedImage
-import com.example.ajiekc.karoon.extensions.toast
+import com.example.ajiekc.karoon.ui.newsfeed.NewsfeedFragment
 import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -53,7 +49,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         updateNavHeader()
 
         if (savedInstanceState == null) {
-            replaceFragment(SearchUsersFragment())
+            replaceFragment(NewsfeedFragment())
         }
     }
 
@@ -86,7 +82,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                replaceFragment(SearchUsersFragment())
+                replaceFragment(NewsfeedFragment())
             }
             R.id.nav_logout -> {
                 logout()

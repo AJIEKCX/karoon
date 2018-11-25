@@ -1,4 +1,4 @@
-package com.example.ajiekc.karoon.ui.search
+package com.example.ajiekc.karoon.ui.newsfeed
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -9,24 +9,24 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.ajiekc.karoon.LceState
 import com.example.ajiekc.karoon.R
-import com.example.ajiekc.karoon.db.User
-import com.example.ajiekc.karoon.extensions.loadRoundedImage
+import com.example.ajiekc.karoon.entity.VKNewsfeed
 import com.example.ajiekc.karoon.widget.BaseRecyclerAdapter
-import com.squareup.picasso.Picasso
 
-class UsersAdapter(items: List<User>) : BaseRecyclerAdapter<UsersAdapter.RepositoryHolder, User>(items) {
+class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAdapter.RepositoryHolder, VKNewsfeed>(items) {
 
     private var mListener: RepeatButtonClickListener? = null
 
     abstract class RepositoryHolder(view: View) : RecyclerView.ViewHolder(view)
 
     class RepositoryItemHolder(val view: View) : RepositoryHolder(view) {
-        private val textView: TextView = view.findViewById(R.id.user_login)
+        private val userNameView: TextView = view.findViewById(R.id.user_name)
+        private val postTextView: TextView = view.findViewById(R.id.post_text)
         private val userAvatarView: ImageView = view.findViewById(R.id.user_avatar)
 
-        fun bind(user: User) {
-            textView.text = user.login
-            Picasso.get().loadRoundedImage(user.avatarUrl, userAvatarView, R.drawable.ic_user)
+        fun bind(news: VKNewsfeed) {
+            userNameView.text = "Vasya pupkin"
+            postTextView.text = news.text
+            //Picasso.get().loadRoundedImage(news.avatarUrl, userAvatarView, R.drawable.ic_user)
         }
     }
 
@@ -43,12 +43,12 @@ class UsersAdapter(items: List<User>) : BaseRecyclerAdapter<UsersAdapter.Reposit
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (getItem(position).type == LceState.LOADING.name) {
+/*        if (getItem(position).type == LceState.LOADING.name) {
             return LceState.LOADING.ordinal
         }
         if (getItem(position).type == LceState.ERROR.name) {
             return LceState.ERROR.ordinal
-        }
+        }*/
 
         return LceState.CONTENT.ordinal
     }
@@ -67,7 +67,7 @@ class UsersAdapter(items: List<User>) : BaseRecyclerAdapter<UsersAdapter.Reposit
             }
         }
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_user, parent, false)
+            .inflate(R.layout.item_vk_news, parent, false)
         return RepositoryItemHolder(view)
     }
 
@@ -84,10 +84,10 @@ class UsersAdapter(items: List<User>) : BaseRecyclerAdapter<UsersAdapter.Reposit
         }
     }
 
-    fun isLastItemUser(): Boolean {
+/*    fun isLastItemUser(): Boolean {
         val user = getLastItem()
         return user?.type != LceState.LOADING.name && user?.type != LceState.ERROR.name
-    }
+    }*/
 
     fun setOnRepeatButtonClickListener(listener: RepeatButtonClickListener) {
         mListener = listener

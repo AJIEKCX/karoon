@@ -13,7 +13,7 @@ class LoggingInterceptor : Interceptor {
 
     init {
         interceptor = HttpLoggingInterceptor()
-                .setLevel(if (BuildConfig.DEBUG) BODY else NONE)
+            .setLevel(if (BuildConfig.DEBUG) BODY else NONE)
     }
 
     override fun intercept(chain: Interceptor.Chain): Response = interceptor.intercept(chain)

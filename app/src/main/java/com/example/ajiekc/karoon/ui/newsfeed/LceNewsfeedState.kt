@@ -1,6 +1,6 @@
-package com.example.ajiekc.karoon.ui.search
+package com.example.ajiekc.karoon.ui.newsfeed
 
-enum class LceSearchState {
+enum class LceNewsfeedState {
     INITIAL_LOADING,
     LOADING_NEXT_PAGE,
     NEXT_PAGE_LOADED,

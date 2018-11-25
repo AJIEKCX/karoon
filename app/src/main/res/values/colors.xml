@@ -9,4 +9,6 @@
 
     <color name="white">@android:color/white</color>
     <color name="defaultTextColor">#de000000</color>
+
+    <color name="screen_background_secondary">#f1f1f1</color>
 </resources>
