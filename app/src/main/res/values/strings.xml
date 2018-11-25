@@ -18,8 +18,7 @@
     <string name="auth_error">Ошибка авторизации</string>
 
     <string name="loading_failed">Ошибка при загрузке данных</string>
-    <string name="empty_user_list">Пользователи не найдены!</string>
-    <string name="search_view_hint">Найти пользователя</string>
+    <string name="empty_list">Новостей нет!</string>
 
     <string name="auth_title">Авторизация</string>
     <string name="main_page_item">Главная</string>
