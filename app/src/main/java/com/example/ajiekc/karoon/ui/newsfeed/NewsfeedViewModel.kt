@@ -30,6 +30,7 @@ class NewsfeedViewModel @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = { list ->
+                    dataSet.clear()
                     dataSet.addAll(list)
                     viewState.value = NewsfeedViewState.content(dataSet, false)
                 },

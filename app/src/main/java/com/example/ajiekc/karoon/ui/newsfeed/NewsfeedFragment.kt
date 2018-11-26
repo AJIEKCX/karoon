@@ -76,7 +76,7 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
         val color = ResourcesCompat.getColor(resources, R.color.colorAccent, null)
         mSwipeRefreshLayout.setColorSchemeColors(color)
         mSwipeRefreshLayout.setOnRefreshListener {
-            //mViewModel.loadNews(true)
+            mViewModel.loadNews()
         }
     }
 
@@ -139,10 +139,9 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
     }
 
     private fun onDataReceive(data: List<VKNewsfeed>?) {
-        if (data == null) {
-            return
+        data?.let {
+            mAdapter.changeDataSet(data)
         }
-        mAdapter.changeDataSet(data)
     }
 
     override fun onRepeatButtonClick() {
