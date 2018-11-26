@@ -21,66 +21,47 @@ class NewsfeedViewModel @Inject constructor(
         return viewState
     }
 
-    fun loadNews() {
-        repository.loadNews()
-            .doOnSubscribe { viewState.postValue(NewsfeedViewState.loading()) }
-            .doOnSuccess { viewState.postValue(NewsfeedViewState.hideLoading()) }
+    fun loadNews(reload: Boolean = false, startFrom: String? = null) {
+        if (!reload && startFrom == null && !dataSet.isEmpty()) {
+            return
+        }
+        loadData(reload, startFrom)
+    }
+
+    private fun loadData(reload: Boolean = false, startFrom: String? = null) {
+        repository.loadNews(startFrom)
+            .doOnSubscribe {
+                viewState.postValue(when {
+                    startFrom != null -> NewsfeedViewState.loadingNextPage()
+                    !reload -> NewsfeedViewState.initialLoading()
+                    else -> NewsfeedViewState.loading()
+                })
+            }
+            .doOnSuccess {
+                if (startFrom != null) {
+                    viewState.postValue(NewsfeedViewState.nextPageLoaded())
+                } else {
+                    viewState.postValue(NewsfeedViewState.hideLoading())
+                }
+            }
             .doOnError { viewState.postValue(NewsfeedViewState.hideLoading()) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = { list ->
-                    dataSet.clear()
+                    if (reload) {
+                        dataSet.clear()
+                    }
                     dataSet.addAll(list)
-                    viewState.value = NewsfeedViewState.content(dataSet, false)
+                    viewState.value = NewsfeedViewState.content(dataSet, reload)
                 },
                 onError = { t: Throwable? ->
-                    viewState.value = NewsfeedViewState.error(t)
+                    if (startFrom != null) {
+                        viewState.postValue(NewsfeedViewState.errorNextPageLoading())
+                    } else {
+                        viewState.value = NewsfeedViewState.error(t)
+                    }
                     Log.e("NewsfeedViewModel", "ERROR: ${t?.message}")
                 }).disposeLater()
     }
-
-//    fun loadData(reload: Boolean = false, since: Int = 0) {
-//        if (!reload && since == 0 && !dataSet.isEmpty()) {
-//            return
-//        }
-//        load(reload, since)
-//    }
-
-/*    private fun load(reload: Boolean = false, since: Int = 0) {
-        disposables.add(repository.getUsers(since)
-                .doOnSubscribe {
-                    viewState.postValue(when {
-                        since != 0 -> NewsfeedViewState.loadingNextPage()
-                        !reload -> NewsfeedViewState.initialLoading()
-                        else -> NewsfeedViewState.loading()
-                    })
-                }
-                .doOnSuccess {
-                    if (since != 0) {
-                        viewState.postValue(NewsfeedViewState.nextPageLoaded())
-                    } else {
-                        viewState.postValue(NewsfeedViewState.hideLoading())
-                    }
-                }
-                .doOnError { viewState.postValue(NewsfeedViewState.hideLoading()) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = { list ->
-                        if (reload) {
-                            dataSet.clear()
-                        }
-                        dataSet.addAll(list)
-                        viewState.value = NewsfeedViewState.content(dataSet, reload)
-                    },
-                    onError = { t: Throwable? ->
-                        if (since != 0) {
-                            viewState.postValue(NewsfeedViewState.errorNextPageLoading())
-                        } else {
-                            viewState.value = NewsfeedViewState.error(t)
-                        }
-                        Log.e("NewsfeedViewModel", "ERROR: ${t?.message}")
-                    }))
-    }*/
 }

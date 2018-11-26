@@ -9,5 +9,10 @@ data class VKNewsfeed(
     val authorPhotoUrl: String,
     val likes: Int,
     val comments: Int,
-    val reposts: Int
-)
+    val reposts: Int,
+    val nextFrom: String?
+) {
+    constructor() : this(0, "", 0L, "", "", "", 0, 0, 0, null)
+
+    var type: String? = null
+}

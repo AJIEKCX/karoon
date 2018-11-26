@@ -6,7 +6,8 @@ data class VKNewsfeedResponse(val response: Response) {
     data class Response(
         val items: List<Item>,
         val profiles: List<Profile>?,
-        val groups: List<Group>?
+        val groups: List<Group>?,
+        @SerializedName("next_from") val nextFrom: String?
     ) {
         data class Item(
             @SerializedName("post_id") val postId: Int,

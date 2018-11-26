@@ -10,7 +10,8 @@ interface VKService {
     fun getNews(
         @Query("filters") filters: String,
         @Query("v") version: String,
-        @Query("access_token") accessToken: String
+        @Query("access_token") accessToken: String,
+        @Query("start_from") startFrom: String?
     ): Single<VKNewsfeedResponse>
 
     @GET("users.get")

@@ -67,12 +67,12 @@ class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAda
     }
 
     override fun getItemViewType(position: Int): Int {
-/*        if (getItem(position).type == LceState.LOADING.name) {
+        if (getItem(position).type == LceState.LOADING.name) {
             return LceState.LOADING.ordinal
         }
         if (getItem(position).type == LceState.ERROR.name) {
             return LceState.ERROR.ordinal
-        }*/
+        }
 
         return LceState.CONTENT.ordinal
     }
@@ -108,10 +108,10 @@ class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAda
         }
     }
 
-/*    fun isLastItemUser(): Boolean {
-        val user = getLastItem()
-        return user?.type != LceState.LOADING.name && user?.type != LceState.ERROR.name
-    }*/
+    fun isLastItemUser(): Boolean {
+        val item = getLastItem()
+        return item?.type != LceState.LOADING.name && item?.type != LceState.ERROR.name
+    }
 
     fun setOnRepeatButtonClickListener(listener: RepeatButtonClickListener) {
         mListener = listener

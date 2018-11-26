@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.ajiekc.karoon.LceState
 import com.example.ajiekc.karoon.R
 import com.example.ajiekc.karoon.entity.VKNewsfeed
 import com.example.ajiekc.karoon.extensions.toast
@@ -41,7 +42,7 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
             emptyView = view.findViewById(R.id.empty_text_view)
             progressView = view.findViewById(R.id.progress_view)
         }
-/*        mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val visibleItemCount = linearLayoutManager.childCount
@@ -49,13 +50,13 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
                 val pastVisibleItems =
                         linearLayoutManager.findFirstVisibleItemPosition()
                 if (visibleItemCount + pastVisibleItems >= totalItemCount && isRecyclerScrollable(recyclerView) && !mNextPageLoading) {
-                    val userId = mAdapter.getLastItem()?.id
-                    if (userId != null && userId > 0) {
-                        //mViewModel.loadData(since = userId)
+                    val nextPage = mAdapter.getLastItem()?.nextFrom
+                    nextPage?.let {
+                        mViewModel.loadNews(startFrom = nextPage)
                     }
                 }
             }
-        })*/
+        })
         mAdapter = NewsfeedAdapter(mViewModel.dataSet)
         mAdapter.attachToRecyclerView(mRecyclerView)
         mAdapter.setOnRepeatButtonClickListener(this)
@@ -76,7 +77,7 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
         val color = ResourcesCompat.getColor(resources, R.color.colorAccent, null)
         mSwipeRefreshLayout.setColorSchemeColors(color)
         mSwipeRefreshLayout.setOnRefreshListener {
-            mViewModel.loadNews()
+            mViewModel.loadNews(reload = true)
         }
     }
 
@@ -88,13 +89,13 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
                 Log.d(TAG, "INITIAL_LOADING")
             }
             LceNewsfeedState.LOADING_NEXT_PAGE -> {
-                /*              mSwipeRefreshLayout.isEnabled = true
+                              mSwipeRefreshLayout.isEnabled = true
                               mNextPageLoading = true
                               if (mAdapter.isLastItemUser()) {
-                                  mAdapter.add(User(type = LceState.LOADING.name))
+                                  mAdapter.add(VKNewsfeed().apply {  type = LceState.LOADING.name })
                               } else {
-                                  mAdapter.replaceLastItem(User(type = LceState.LOADING.name))
-                              }*/
+                                  mAdapter.replaceLastItem(VKNewsfeed().apply { type = LceState.LOADING.name })
+                              }
                 Log.d(TAG, "LOADING_NEXT_PAGE")
             }
             LceNewsfeedState.NEXT_PAGE_LOADED -> {
@@ -125,9 +126,9 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
                 Log.d(TAG, "CONTENT")
             }
             LceNewsfeedState.ERROR_NEXT_PAGE_LOADING -> {
-                /* mSwipeRefreshLayout.isEnabled = true
-                 mAdapter.replaceLastItem(User(type = LceState.ERROR.name))
-                 Log.d(TAG, "ERROR_NEXT_PAGE_LOADING")*/
+                 mSwipeRefreshLayout.isEnabled = true
+                 mAdapter.replaceLastItem(VKNewsfeed().apply { type = LceState.ERROR.name })
+                 Log.d(TAG, "ERROR_NEXT_PAGE_LOADING")
             }
             LceNewsfeedState.ERROR -> {
                 mSwipeRefreshLayout.isEnabled = true
@@ -145,12 +146,12 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
     }
 
     override fun onRepeatButtonClick() {
-/*        val count = mAdapter.itemCount
+        val count = mAdapter.itemCount
         if (count > 1) {
-            val userId = mAdapter.getItem(count - 2).id
-            if (userId != null && userId > 0) {
-                //mViewModel.loadData(since = userId)
+            val nextPage = mAdapter.getItem(count - 2).nextFrom
+            nextPage?.let {
+                mViewModel.loadNews(startFrom = nextPage)
             }
-        }*/
+        }
     }
 }

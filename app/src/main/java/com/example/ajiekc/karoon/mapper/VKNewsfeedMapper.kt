@@ -8,6 +8,7 @@ object VKNewsfeedMapper {
     fun map(resp: VKNewsfeedResponse.Response): List<VKNewsfeed> {
         return resp.items.map { newsfeed ->
 
+            val nextFrom = resp.nextFrom
             val authorName: String
             val authorPhotoUrl: String
             if (newsfeed.sourceId < 0) {
@@ -29,7 +30,8 @@ object VKNewsfeedMapper {
                 authorPhotoUrl = authorPhotoUrl,
                 likes = newsfeed.likes?.count ?: 0,
                 comments = newsfeed.comments?.count ?: 0,
-                reposts = newsfeed.reposts?.count ?: 0
+                reposts = newsfeed.reposts?.count ?: 0,
+                nextFrom = nextFrom
             )
         }
     }

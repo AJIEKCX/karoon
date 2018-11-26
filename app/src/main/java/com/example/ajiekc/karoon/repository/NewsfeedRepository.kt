@@ -13,9 +13,9 @@ class NewsfeedRepository @Inject constructor(
     private val vkService: VKService,
     private val preferences: SharedPreferences
 ) {
-    fun loadNews(): Single<List<VKNewsfeed>> {
+    fun loadNews(startFrom: String? = null): Single<List<VKNewsfeed>> {
         val accessToken = preferences[AuthActivity.AUTH_TOKEN, ""] ?: ""
-        return vkService.getNews("post", "5.52", accessToken)
+        return vkService.getNews("post", "5.52", accessToken, startFrom)
             .map { it.response }
             .map { VKNewsfeedMapper.map(it) }
             .map { newsfeed -> newsfeed.filter { it.photoUrl.isNotEmpty() || it.text.isNotEmpty() } }
