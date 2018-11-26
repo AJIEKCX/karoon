@@ -18,5 +18,6 @@ class NewsfeedRepository @Inject constructor(
         return vkService.getNews("post", "5.52", accessToken)
             .map { it.response }
             .map { VKNewsfeedMapper.map(it) }
+            .map { newsfeed -> newsfeed.filter { it.photoUrl.isNotEmpty() || it.text.isNotEmpty() } }
     }
 }

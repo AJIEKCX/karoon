@@ -26,7 +26,10 @@ object VKNewsfeedMapper {
                 date = newsfeed.date ?: 0,
                 photoUrl = newsfeed.attachments?.find { it.type == "photo" }?.photo?.photoUrl ?: "",
                 authorName = authorName,
-                authorPhotoUrl = authorPhotoUrl
+                authorPhotoUrl = authorPhotoUrl,
+                likes = newsfeed.likes?.count ?: 0,
+                comments = newsfeed.comments?.count ?: 0,
+                reposts = newsfeed.reposts?.count ?: 0
             )
         }
     }

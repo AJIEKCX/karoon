@@ -13,8 +13,23 @@ data class VKNewsfeedResponse(val response: Response) {
             @SerializedName("source_id") val sourceId: Int,
             @SerializedName("text") val text: String?,
             @SerializedName("date") val date: Long?,
-            @SerializedName("attachments") val attachments: List<Attachments>?
+            @SerializedName("attachments") val attachments: List<Attachments>?,
+            @SerializedName("likes") val likes: Like?,
+            @SerializedName("reposts") val reposts: Repost?,
+            @SerializedName("comments") val comments: Comment?
         ) {
+            data class Like(
+                val count: Int?
+            )
+
+            data class Repost(
+                val count: Int?
+            )
+
+            data class Comment(
+                val count: Int?
+            )
+
             data class Attachments(
                 val type: String?,
                 val photo: Photo?

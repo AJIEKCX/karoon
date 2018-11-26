@@ -6,5 +6,8 @@ data class VKNewsfeed(
     val date: Long,
     val photoUrl: String,
     val authorName: String,
-    val authorPhotoUrl: String
+    val authorPhotoUrl: String,
+    val likes: Int,
+    val comments: Int,
+    val reposts: Int
 )

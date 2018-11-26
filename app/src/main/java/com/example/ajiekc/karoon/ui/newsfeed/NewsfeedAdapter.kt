@@ -23,6 +23,9 @@ class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAda
     class RepositoryItemHolder(val view: View) : RepositoryHolder(view) {
         private val userNameView: TextView = view.findViewById(R.id.user_name)
         private val postTextView: TextView = view.findViewById(R.id.post_text)
+        private val likesTextView: TextView = view.findViewById(R.id.tv_likes)
+        private val commentsTextView: TextView = view.findViewById(R.id.tv_comments)
+        private val repostsTextView: TextView = view.findViewById(R.id.tv_reposts)
         private val userAvatarView: ImageView = view.findViewById(R.id.user_avatar)
         private val postImageView: ImageView = view.findViewById(R.id.post_image)
 
@@ -41,8 +44,11 @@ class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAda
                     .load(item.photoUrl)
                     .into(postImageView)
             } else {
-                postImageView.visibility = View.INVISIBLE
+                postImageView.visibility = View.GONE
             }
+            likesTextView.text = item.likes.toString()
+            commentsTextView.text = item.comments.toString()
+            repostsTextView.text = item.reposts.toString()
         }
     }
 
