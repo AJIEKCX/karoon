@@ -17,9 +17,6 @@ class NewsfeedRepository @Inject constructor(
         val accessToken = preferences[AuthActivity.AUTH_TOKEN, ""] ?: ""
         return vkService.getNews("post", "5.52", accessToken)
             .map { it.response }
-            .toObservable()
-            .flatMapIterable { it.items }
             .map { VKNewsfeedMapper.map(it) }
-            .toList()
     }
 }

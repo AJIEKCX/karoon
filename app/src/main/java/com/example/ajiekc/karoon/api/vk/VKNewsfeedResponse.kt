@@ -2,13 +2,38 @@ package com.example.ajiekc.karoon.api.vk
 
 import com.google.gson.annotations.SerializedName
 
-data class VKNewsfeedResponse(@SerializedName("response") val response: Response?) {
+data class VKNewsfeedResponse(val response: Response) {
+    data class Response(
+        val items: List<Item>,
+        val profiles: List<Profile>?,
+        val groups: List<Group>?
+    ) {
+        data class Item(
+            @SerializedName("post_id") val postId: Int,
+            @SerializedName("source_id") val sourceId: Int,
+            @SerializedName("text") val text: String?,
+            @SerializedName("date") val date: Long?,
+            @SerializedName("attachments") val attachments: List<Attachments>?
+        ) {
+            data class Attachments(
+                val type: String?,
+                val photo: Photo?
+            ) {
+                data class Photo(@SerializedName("photo_807") val photoUrl: String?)
+            }
+        }
 
-    data class Response(@SerializedName("items") val items: List<Item>?)
+        data class Profile(
+            @SerializedName("id") val id: Int,
+            @SerializedName("first_name") val firstName: String?,
+            @SerializedName("last_name") val lastName: String?,
+            @SerializedName("photo_100") val photoUrl: String?
+        )
 
-    data class Item(
-        @SerializedName("post_id") val postId: Int?,
-        @SerializedName("text") val text: String?,
-        @SerializedName("date") val date: Long?
-    )
+        data class Group(
+            @SerializedName("id") val id: Int,
+            @SerializedName("name") val name: String?,
+            @SerializedName("photo_100") val photoUrl: String?
+        )
+    }
 }

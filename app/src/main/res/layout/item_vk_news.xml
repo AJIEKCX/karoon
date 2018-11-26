@@ -15,13 +15,13 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/medium_margin">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/user_avatar"
                 android:layout_width="@dimen/user_icon"
                 android:layout_height="@dimen/user_icon"
+                android:layout_margin="@dimen/default_margin"
                 android:contentDescription="@string/user_avatar_descr"
                 android:src="@drawable/ic_user"
                 app:layout_constraintStart_toStartOf="parent"
@@ -32,6 +32,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/medium_margin"
+                android:layout_marginTop="@dimen/default_margin"
+                android:layout_marginBottom="@dimen/default_margin"
+                android:layout_marginEnd="@dimen/default_margin"
                 android:textColor="@color/defaultTextColor"
                 android:textSize="@dimen/item_text_size"
                 android:singleLine="true"
@@ -46,16 +49,25 @@
                 android:id="@+id/post_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/medium_margin"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_margin="@dimen/medium_margin"
                 android:textColor="@color/defaultTextColor"
                 android:textSize="@dimen/item_text_size"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/user_avatar"
                 tools:text="post text" />
+
+            <ImageView
+                android:id="@+id/post_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitStart"
+                android:adjustViewBounds="true"
+                android:layout_marginTop="@dimen/medium_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/post_text"/>
 
         </android.support.constraint.ConstraintLayout>
 

@@ -10,7 +10,9 @@ import android.widget.TextView
 import com.example.ajiekc.karoon.LceState
 import com.example.ajiekc.karoon.R
 import com.example.ajiekc.karoon.entity.VKNewsfeed
+import com.example.ajiekc.karoon.extensions.loadRoundedImage
 import com.example.ajiekc.karoon.widget.BaseRecyclerAdapter
+import com.squareup.picasso.Picasso
 
 class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAdapter.RepositoryHolder, VKNewsfeed>(items) {
 
@@ -22,11 +24,25 @@ class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAda
         private val userNameView: TextView = view.findViewById(R.id.user_name)
         private val postTextView: TextView = view.findViewById(R.id.post_text)
         private val userAvatarView: ImageView = view.findViewById(R.id.user_avatar)
+        private val postImageView: ImageView = view.findViewById(R.id.post_image)
 
-        fun bind(news: VKNewsfeed) {
-            userNameView.text = "Vasya pupkin"
-            postTextView.text = news.text
-            //Picasso.get().loadRoundedImage(news.avatarUrl, userAvatarView, R.drawable.ic_user)
+        fun bind(item: VKNewsfeed) {
+            userNameView.text = item.authorName
+            Picasso.get().loadRoundedImage(item.authorPhotoUrl, userAvatarView, R.drawable.ic_user)
+            if (item.text.isNotEmpty()) {
+                postTextView.visibility = View.VISIBLE
+                postTextView.text = item.text
+            } else {
+                postTextView.visibility = View.GONE
+            }
+            if (item.photoUrl.isNotEmpty()) {
+                postImageView.visibility = View.VISIBLE
+                Picasso.get()
+                    .load(item.photoUrl)
+                    .into(postImageView)
+            } else {
+                postImageView.visibility = View.INVISIBLE
+            }
         }
     }
 
@@ -57,12 +73,12 @@ class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAda
         when (viewType) {
             LceState.LOADING.ordinal -> {
                 val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_loading, parent, false)
+                    .inflate(R.layout.item_loading, parent, false)
                 return RepositoryLoadingHolder(view)
             }
             LceState.ERROR.ordinal -> {
                 val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_error, parent, false)
+                    .inflate(R.layout.item_error, parent, false)
                 return RepositoryErrorHolder(view)
             }
         }
