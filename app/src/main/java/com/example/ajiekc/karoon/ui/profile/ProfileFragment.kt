@@ -20,6 +20,7 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.vk.sdk.VKAccessToken
 import com.vk.sdk.VKCallback
@@ -28,7 +29,11 @@ import com.vk.sdk.VKServiceActivity
 import com.vk.sdk.api.VKError
 import timber.log.Timber
 
-class ProfileFragment : BaseFragment() {
+class ProfileFragment : BaseFragment(), GoogleApiClient.OnConnectionFailedListener {
+    override fun onConnectionFailed(p0: ConnectionResult) {
+        Timber.e("CONNECTION FAILED")
+    }
+
     private lateinit var mFBCallbackManager: CallbackManager
     private var mGoogleSignInClient: GoogleApiClient? = null
 
@@ -36,10 +41,9 @@ class ProfileFragment : BaseFragment() {
         createViewModel<ProfileViewModel>()
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
 
-        mGoogleSignInClient?.stopAutoManage(activity!!)
         mGoogleSignInClient?.disconnect()
     }
 
@@ -97,10 +101,9 @@ class ProfileFragment : BaseFragment() {
             .requestScopes(com.google.android.gms.common.api.Scope("https://www.googleapis.com/auth/youtube.readonly"))
             .build()
         mGoogleSignInClient = GoogleApiClient.Builder(context!!)
-            .enableAutoManage(activity!!) { Timber.e(it.errorMessage) }
+            .enableAutoManage(activity!!, this)
             .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
             .build()
-
         val signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleSignInClient)
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
@@ -123,6 +126,38 @@ class ProfileFragment : BaseFragment() {
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
+
+/*    fun getAccessToken(authCode: String) {
+        val client = OkHttpClient()
+        val requestBody = FormBody.Builder()
+            .add("grant_type", "authorization_code")
+            .add("client_id", "294611782255-a8rfjhnm0l2naa4b9qia69ig31okf0lv.apps.googleusercontent.com")
+            .add("client_secret", "8JEQZaXXYiH2It069sr4JQsz")
+            .add("code", authCode)
+            .build()
+        val request = Request.Builder()
+            .url("https://www.googleapis.com/oauth2/v4/token")
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .post(requestBody)
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Timber.e("onFailure")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    val jsonObject = JSONObject(response.body()?.string())
+                    val token = jsonObject.get("access_token").toString()
+                    Timber.d("ACCESS TOKEN = $token")
+
+                } catch (e: JSONException) {
+                    Timber.e(e.toString())
+                }
+            }
+
+        })
+    }*/
 
     inner class VKAuthCallback : VKCallback<VKAccessToken> {
 

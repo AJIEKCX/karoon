@@ -1,6 +1,7 @@
 package com.example.ajiekc.karoon.api.youtube
 
 import io.reactivex.Single
+import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -14,5 +15,12 @@ interface YoutubeService {
         @Query("client_secret") clientSecret: String,
         @Query("code") authCode: String?
     ): Single<TokenResponse>
+
+    @GET("/youtube/v3/subscriptions")
+    fun getSubsriptions(
+            @Query("part") part: String,
+            @Query("mine") mine: String,
+            @Query("key") key: String
+    ): Single<YoutubeSubsriptionsResponse>
 
 }

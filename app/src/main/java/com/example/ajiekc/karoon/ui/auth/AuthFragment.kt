@@ -41,10 +41,9 @@ class AuthFragment : BaseFragment() {
         createViewModel<AuthViewModel>()
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
 
-        mGoogleSignInClient?.stopAutoManage(activity!!)
         mGoogleSignInClient?.disconnect()
     }
 
@@ -145,12 +144,45 @@ class AuthFragment : BaseFragment() {
         if (requestCode == RC_SIGN_IN) {
             val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
             if (result.isSuccess) {
-                val account = result.signInAccount
-                val authCode = account?.serverAuthCode
-                mViewModel.getUserData(AuthType.GOOGLE, null, null, account, authCode)
+                val acct = result.signInAccount
+                val authCode = acct?.serverAuthCode
+                getAccessToken(authCode!!)
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    fun getAccessToken(authCode: String) {
+        val client = OkHttpClient()
+        val requestBody = FormBody.Builder()
+            .add("grant_type", "authorization_code")
+            .add("client_id", "294611782255-a8rfjhnm0l2naa4b9qia69ig31okf0lv.apps.googleusercontent.com")
+            .add("client_secret", "8JEQZaXXYiH2It069sr4JQsz")
+            .add("code", authCode)
+            .build()
+        val request = Request.Builder()
+            .url("https://www.googleapis.com/oauth2/v4/token")
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .post(requestBody)
+            .build()
+        Timber.d("REQUEST = $request")
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Timber.e("onFailure")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    val jsonObject = JSONObject(response.body()?.string())
+                    val token = jsonObject.get("access_token").toString()
+                    Timber.d("ACCESS TOKEN = $token")
+
+                } catch (e: JSONException) {
+                    Timber.e(e.toString())
+                }
+            }
+
+        })
     }
 
     inner class VKAuthCallback : VKCallback<VKAccessToken> {
@@ -177,6 +209,17 @@ class AuthFragment : BaseFragment() {
 
         override fun onError(exception: FacebookException) {
             Timber.e("onError FB")
+        }
+    }
+
+    private fun logout(authType: AuthType) {
+        when (authType) {
+            AuthType.VK -> VKSdk.logout()
+            AuthType.FB -> LoginManager.getInstance().logOut()
+            AuthType.GOOGLE -> {
+                GoogleSignIn.getClient(context!!, GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .signOut()
+            }
         }
     }
 
