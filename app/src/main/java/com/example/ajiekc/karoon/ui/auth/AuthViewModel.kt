@@ -23,9 +23,10 @@ class AuthViewModel @Inject constructor(
         authType: AuthType,
         accessToken: String? = null,
         userId: String? = null,
-        account: GoogleSignInAccount? = null
+        account: GoogleSignInAccount? = null,
+        authCode: String? = null
     ) {
-        repository.getAuthData(authType, accessToken, userId, account, null)
+        repository.getAuthData(authType, accessToken, userId, account, authCode)
             .doOnSubscribe { viewState.postValue(AuthViewState.loading()) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
