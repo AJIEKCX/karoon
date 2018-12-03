@@ -23,4 +23,12 @@ interface YoutubeService {
             @Query("key") key: String
     ): Single<YoutubeSubsriptionsResponse>
 
+    @GET("/youtube/v3/activities")
+    fun getActivities(
+            @Query("part") part: String,
+            @Query("mine") mine: String,
+            @Query("maxResults") maxResults: String,
+            @Query("key") key: String
+    ): Single<YoutubeActivitiesResponse>
+
 }
