@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="type"
+            type="com.example.ajiekc.karoon.ui.auth.AuthType" />
+
+        <variable
+            name="vm"
+            type="com.example.ajiekc.karoon.ui.profile.ProfileViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="0dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/user_image_view"
+                    android:layout_width="@dimen/user_avatar"
+                    android:layout_height="@dimen/user_avatar"
+                    android:layout_margin="@dimen/medium_margin"
+                    android:src="@drawable/ic_user_placeholder"
+                    app:imageUrl="@{ vm.photoUrl }"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_round_button"
+                    android:src="@drawable/ic_vk"
+                    android:tint="@color/vkMainColor"
+                    app:isVisible="@{ vm.authType == type.VK }"
+                    app:layout_constraintBottom_toBottomOf="@+id/user_image_view"
+                    app:layout_constraintEnd_toEndOf="@+id/user_image_view" />
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_round_button"
+                    android:src="@drawable/ic_fb"
+                    android:tint="@color/facebookMainColor"
+                    app:isVisible="@{ vm.authType == type.FB }"
+                    app:layout_constraintBottom_toBottomOf="@+id/user_image_view"
+                    app:layout_constraintEnd_toEndOf="@+id/user_image_view" />
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_round_button"
+                    android:src="@drawable/googleg_standard_color_18"
+                    app:isVisible="@{ vm.authType == type.GOOGLE }"
+                    app:layout_constraintBottom_toBottomOf="@+id/user_image_view"
+                    app:layout_constraintEnd_toEndOf="@+id/user_image_view" />
+
+                <TextView
+                    android:id="@+id/user_name_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:gravity="center"
+                    android:text="@{ vm.userName }"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/user_image_view"
+                    tools:text="Username" />
+
+                <ImageButton
+                    android:id="@+id/btnLogout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/medium_margin"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{ () -> vm.logout(vm.authType) }"
+                    android:src="@drawable/ic_logout"
+                    android:tint="#4f4f4f"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/vk_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/medium_margin"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="@dimen/medium_margin"
+                    android:layout_marginBottom="@dimen/medium_margin"
+                    android:onClick="@{ () -> vm.changeProfile(type.VK)}"
+                    android:src="@drawable/ic_vk"
+                    app:backgroundTint="@color/vkMainColor"
+                    app:isGone="@{ vm.authType == type.VK || vm.isLoading}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/google_button"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/user_name_view" />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/google_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/medium_margin"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="@dimen/medium_margin"
+                    android:layout_marginBottom="@dimen/medium_margin"
+                    android:onClick="@{ () -> vm.changeProfile(type.GOOGLE)}"
+                    android:src="@drawable/googleg_standard_color_18"
+                    app:backgroundTint="@color/white"
+                    app:isGone="@{ vm.authType == type.GOOGLE || vm.isLoading}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/fb_button"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/vk_button"
+                    app:layout_constraintTop_toBottomOf="@+id/user_name_view" />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fb_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/medium_margin"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="@dimen/medium_margin"
+                    android:layout_marginBottom="@dimen/medium_margin"
+                    android:onClick="@{ () -> vm.changeProfile(type.FB)}"
+                    android:src="@drawable/ic_fb"
+                    app:backgroundTint="@color/facebookMainColor"
+                    app:isGone="@{ vm.authType == type.FB || vm.isLoading}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/google_button"
+                    app:layout_constraintTop_toBottomOf="@+id/user_name_view" />
+
+                <FrameLayout
+                    android:id="@+id/frameLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@color/white"
+                    app:isVisible="@{ vm.isLoading }"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="gone">
+
+                    <ProgressBar
+                        android:id="@+id/progress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

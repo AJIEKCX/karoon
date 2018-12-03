@@ -4,6 +4,9 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
+    dataBinding {
+        enabled = true
+    }
     signingConfigs {
         debug {
             keyAlias 'AndroidDebugKey'
@@ -14,6 +17,7 @@ android {
     }
     compileSdkVersion 28
     defaultConfig {
+        multiDexEnabled true
         applicationId "com.example.ajiekc.karoon"
         minSdkVersion 17
         targetSdkVersion 28
@@ -83,6 +87,10 @@ dependencies {
     implementation "com.github.stephanenicolas.toothpick:toothpick-runtime:$versions.toothpick"
     annotationProcessor "com.github.stephanenicolas.toothpick:toothpick-compiler:$versions.toothpick"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$versions.toothpick"
+
+    implementation 'ru.terrakok.cicerone:cicerone:3.0.0'
+
+    implementation 'com.jakewharton.timber:timber:4.7.0'
 
     testImplementation 'junit:junit:4.12'
     testImplementation "com.google.truth:truth:0.36"

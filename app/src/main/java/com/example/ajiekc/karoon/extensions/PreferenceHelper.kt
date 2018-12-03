@@ -7,6 +7,8 @@ object PreferenceHelper {
 
     const val DEFAULT_PREFERENCES = "default_preferences"
 
+    const val AUTH_PREF = "auth_pref"
+
     fun defaultPrefs(context: Context): SharedPreferences = customPrefs(context, DEFAULT_PREFERENCES)
 
     fun customPrefs(context: Context, name: String): SharedPreferences = context.getSharedPreferences(name, Context.MODE_PRIVATE)
@@ -28,6 +30,7 @@ fun SharedPreferences.clear() {
 /**
  * puts a key value pair in shared prefs if doesn't exists, otherwise updates value on given [key]
  */
+@Suppress("UNCHECKED_CAST")
 operator fun SharedPreferences.set(key: String, value: Any?) {
     when (value) {
         is String? -> edit { it.putString(key, value) }
@@ -44,13 +47,14 @@ operator fun SharedPreferences.set(key: String, value: Any?) {
  * [T] is the type of value
  * @param defaultValue optional default value - will take null for strings, false for bool and -1 for numeric values if [defaultValue] is not specified
  */
-inline operator fun <reified T : Any> SharedPreferences.get(key: String, defaultValue: T? = null): T? {
+@Suppress("UNCHECKED_CAST")
+inline operator fun <reified T : Any> SharedPreferences.get(key: String, defaultValue: T): T {
     return when (T::class) {
-        String::class -> getString(key, defaultValue as? String) as T?
-        Int::class -> getInt(key, defaultValue as? Int ?: -1) as T?
-        Boolean::class -> getBoolean(key, defaultValue as? Boolean ?: false) as T?
-        Float::class -> getFloat(key, defaultValue as? Float ?: -1f) as T?
-        Long::class -> getLong(key, defaultValue as? Long ?: -1) as T?
+        String::class -> getString(key, defaultValue as String) as T
+        Int::class -> getInt(key, defaultValue as Int) as T
+        Boolean::class -> getBoolean(key, defaultValue as Boolean) as T
+        Float::class -> getFloat(key, defaultValue as Float) as T
+        Long::class -> getLong(key, defaultValue as Long) as T
         else -> throw UnsupportedOperationException("Not yet implemented")
     }
 }

@@ -15,6 +15,7 @@ import com.example.ajiekc.karoon.R
 import com.example.ajiekc.karoon.entity.VKNewsfeed
 import com.example.ajiekc.karoon.extensions.toast
 import com.example.ajiekc.karoon.ui.base.BaseFragment
+import com.example.ajiekc.karoon.ui.main.MainActivity
 import com.example.ajiekc.karoon.widget.LceRecyclerView
 
 class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListener {
@@ -30,6 +31,13 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
 
     private val mViewModel by lazy(LazyThreadSafetyMode.NONE) {
         createViewModel<NewsfeedViewModel>()
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        (activity as? MainActivity)?.setToolbarVisible(true)
+        (activity as? MainActivity)?.setNavigationVisible(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,7 +56,7 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
                 val visibleItemCount = linearLayoutManager.childCount
                 val totalItemCount = linearLayoutManager.itemCount
                 val pastVisibleItems =
-                        linearLayoutManager.findFirstVisibleItemPosition()
+                    linearLayoutManager.findFirstVisibleItemPosition()
                 if (visibleItemCount + pastVisibleItems >= totalItemCount && isRecyclerScrollable(recyclerView) && !mNextPageLoading) {
                     val nextPage = mAdapter.getLastItem()?.nextFrom
                     nextPage?.let {
@@ -89,13 +97,13 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
                 Log.d(TAG, "INITIAL_LOADING")
             }
             LceNewsfeedState.LOADING_NEXT_PAGE -> {
-                              mSwipeRefreshLayout.isEnabled = true
-                              mNextPageLoading = true
-                              if (mAdapter.isLastItemUser()) {
-                                  mAdapter.add(VKNewsfeed().apply {  type = LceState.LOADING.name })
-                              } else {
-                                  mAdapter.replaceLastItem(VKNewsfeed().apply { type = LceState.LOADING.name })
-                              }
+                mSwipeRefreshLayout.isEnabled = true
+                mNextPageLoading = true
+                if (mAdapter.isLastItemUser()) {
+                    mAdapter.add(VKNewsfeed().apply { type = LceState.LOADING.name })
+                } else {
+                    mAdapter.replaceLastItem(VKNewsfeed().apply { type = LceState.LOADING.name })
+                }
                 Log.d(TAG, "LOADING_NEXT_PAGE")
             }
             LceNewsfeedState.NEXT_PAGE_LOADED -> {
@@ -126,9 +134,9 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
                 Log.d(TAG, "CONTENT")
             }
             LceNewsfeedState.ERROR_NEXT_PAGE_LOADING -> {
-                 mSwipeRefreshLayout.isEnabled = true
-                 mAdapter.replaceLastItem(VKNewsfeed().apply { type = LceState.ERROR.name })
-                 Log.d(TAG, "ERROR_NEXT_PAGE_LOADING")
+                mSwipeRefreshLayout.isEnabled = true
+                mAdapter.replaceLastItem(VKNewsfeed().apply { type = LceState.ERROR.name })
+                Log.d(TAG, "ERROR_NEXT_PAGE_LOADING")
             }
             LceNewsfeedState.ERROR -> {
                 mSwipeRefreshLayout.isEnabled = true

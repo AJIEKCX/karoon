@@ -24,6 +24,7 @@
     <string name="main_page_item">Главная</string>
     <string name="logout_item">Выйти</string>
     <string name="search_item">Поиск</string>
+    <string name="profile_item">Профиль</string>
 
     <string name="user_avatar_descr">User avatar</string>
     <string name="repeat_button_descr">Repeat button</string>

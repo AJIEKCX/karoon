@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.auth.AuthActivity">
+    android:layout_height="match_parent">
 
     <Button
         android:id="@+id/vk_button"
         android:layout_width="@dimen/login_button_width"
         android:layout_height="wrap_content"
-        android:onClick="onLoginButtonClick"
         android:theme="@style/AppTheme.VkButton"
         app:layout_constraintBottom_toTopOf="@+id/fb_button"
         app:layout_constraintHorizontal_bias="0.5"
@@ -23,7 +20,6 @@
         android:id="@+id/fb_button"
         android:layout_width="@dimen/login_button_width"
         android:layout_height="wrap_content"
-        android:onClick="onLoginButtonClick"
         android:theme="@style/AppTheme.FacebookButton"
         app:layout_constraintBottom_toTopOf="@+id/google_button"
         app:layout_constraintHorizontal_bias="0.5"
@@ -35,7 +31,6 @@
         android:id="@+id/google_button"
         android:layout_width="@dimen/login_button_width"
         android:layout_height="wrap_content"
-        android:onClick="onLoginButtonClick"
         android:theme="@style/AppTheme.GoogleButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

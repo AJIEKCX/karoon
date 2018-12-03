@@ -10,5 +10,8 @@
     <color name="white">@android:color/white</color>
     <color name="defaultTextColor">#de000000</color>
 
+    <color name="nav_item_checked">@color/colorAccent</color>
+    <color name="nav_item_default">#4f4f4f</color>
+
     <color name="screen_background_secondary">#f1f1f1</color>
 </resources>

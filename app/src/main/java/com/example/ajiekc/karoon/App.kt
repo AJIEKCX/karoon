@@ -7,6 +7,7 @@ import com.example.ajiekc.karoon.extensions.PreferenceHelper.DEFAULT_PREFERENCES
 import com.example.ajiekc.karoon.extensions.isGooglePlayServicesAvailable
 import com.google.android.gms.security.ProviderInstaller
 import com.vk.sdk.VKSdk
+import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import toothpick.smoothie.module.SmoothieApplicationModule
@@ -16,6 +17,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        initLogger()
         initOAuthSDK()
         initIoc()
     }
@@ -24,6 +26,17 @@ class App : Application() {
         VKSdk.initialize(this)
         if (isGooglePlayServicesAvailable()) {
             ProviderInstaller.installIfNeeded(this)
+        }
+    }
+
+    private fun initLogger() {
+        when {
+            BuildConfig.DEBUG -> Timber.plant(Timber.DebugTree())
+            else -> Timber.plant(object : Timber.Tree() {
+                override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+
+                }
+            })
         }
     }
 
