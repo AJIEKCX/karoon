@@ -11,7 +11,8 @@ object YoutubeVideoMapper {
                 date = it.snippet?.publishedAt?.time ?: 0L,
                 videoPreviewUrl = it.snippet?.thumbnails?.high?.url ?: "",
                 channelName = it.snippet?.channelTitle ?: "",
-                channelPhotoUrl = channelPhotoUrl ?: ""
+                channelPhotoUrl = channelPhotoUrl ?: "",
+                videoId = it.id?.videoId ?: ""
             )
         }
     }

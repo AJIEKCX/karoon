@@ -4,4 +4,5 @@ object Screens {
     const val Auth = "auth"
     const val Profile = "profile"
     const val News = "news"
+    const val ExternalUrl = "external-uri"
 }

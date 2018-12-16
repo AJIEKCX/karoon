@@ -5,5 +5,6 @@ data class YoutubeVideo(
     val date: Long,
     val videoPreviewUrl: String,
     val channelName: String,
-    val channelPhotoUrl: String
+    val channelPhotoUrl: String,
+    val videoId: String
 )

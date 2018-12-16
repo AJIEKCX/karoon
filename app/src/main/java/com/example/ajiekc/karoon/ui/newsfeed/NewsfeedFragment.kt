@@ -13,9 +13,12 @@ import android.view.ViewGroup
 import com.example.ajiekc.karoon.LceState
 import com.example.ajiekc.karoon.R
 import com.example.ajiekc.karoon.extensions.toast
+import com.example.ajiekc.karoon.ui.auth.AuthType
 import com.example.ajiekc.karoon.ui.base.BaseFragment
 import com.example.ajiekc.karoon.ui.main.MainActivity
+import com.example.ajiekc.karoon.widget.BaseRecyclerAdapter
 import com.example.ajiekc.karoon.widget.LceRecyclerView
+import timber.log.Timber
 
 class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListener {
 
@@ -67,6 +70,13 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
         mAdapter = NewsfeedAdapter(mViewModel.dataSet)
         mAdapter.attachToRecyclerView(mRecyclerView)
         mAdapter.setOnRepeatButtonClickListener(this)
+        mAdapter.setOnItemClickListener(object : BaseRecyclerAdapter.OnItemClickListener<NewsfeedItemViewModel> {
+            override fun onItemClick(item: NewsfeedItemViewModel) {
+                if (item.socialType == AuthType.GOOGLE.name && item.videoId.isNotEmpty()) {
+                    mViewModel.navigateToVideo(item.videoId)
+                }
+            }
+        })
         mViewModel.viewState().observe(this, Observer {
             renderViewState(it)
         })

@@ -13,9 +13,10 @@ data class NewsfeedItemViewModel(
     val comments: Int,
     val reposts: Int,
     val nextFrom: String?,
-    val socialType: String
+    val socialType: String,
+    val videoId: String
 ) {
-    constructor() : this(0, "", Date(), "", "", "", 0, 0, 0, null, "")
+    constructor() : this(0, "", Date(), "", "", "", 0, 0, 0, null, "", "")
 
     var type: String? = null
 }

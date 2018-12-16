@@ -2,14 +2,17 @@ package com.example.ajiekc.karoon.ui.newsfeed
 
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
+import com.example.ajiekc.karoon.Screens
 import com.example.ajiekc.karoon.repository.NewsfeedRepository
 import com.example.ajiekc.karoon.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class NewsfeedViewModel @Inject constructor(
+    private val router: Router,
     private val repository: NewsfeedRepository
 ) : BaseViewModel() {
 
@@ -64,5 +67,9 @@ class NewsfeedViewModel @Inject constructor(
                     }
                     Log.e("NewsfeedViewModel", "ERROR: ${t?.message}")
                 }).disposeLater()
+    }
+
+    fun navigateToVideo(videoId: String) {
+        router.navigateTo(Screens.ExternalUrl, "https://www.youtube.com/watch?v=$videoId")
     }
 }

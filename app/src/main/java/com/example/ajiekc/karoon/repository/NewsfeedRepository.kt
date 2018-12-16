@@ -77,7 +77,8 @@ class NewsfeedRepository @Inject constructor(
             comments = 0,
             reposts = 0,
             nextFrom = "",
-            socialType = AuthType.GOOGLE.name
+            socialType = AuthType.GOOGLE.name,
+            videoId = video.videoId
         )
     }
 
@@ -93,7 +94,8 @@ class NewsfeedRepository @Inject constructor(
             comments = newsfeed.comments,
             reposts = newsfeed.reposts,
             nextFrom = newsfeed.nextFrom,
-            socialType = AuthType.VK.name
+            socialType = AuthType.VK.name,
+            videoId = ""
         )
     }
 }
