@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.ajiekc.karoon.LceState
 import com.example.ajiekc.karoon.R
-import com.example.ajiekc.karoon.entity.VKNewsfeed
 import com.example.ajiekc.karoon.extensions.toast
 import com.example.ajiekc.karoon.ui.base.BaseFragment
 import com.example.ajiekc.karoon.ui.main.MainActivity
@@ -100,9 +99,9 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
                 mSwipeRefreshLayout.isEnabled = true
                 mNextPageLoading = true
                 if (mAdapter.isLastItemUser()) {
-                    mAdapter.add(VKNewsfeed().apply { type = LceState.LOADING.name })
+                    mAdapter.add(NewsfeedItemViewModel().apply { type = LceState.LOADING.name })
                 } else {
-                    mAdapter.replaceLastItem(VKNewsfeed().apply { type = LceState.LOADING.name })
+                    mAdapter.replaceLastItem(NewsfeedItemViewModel().apply { type = LceState.LOADING.name })
                 }
                 Log.d(TAG, "LOADING_NEXT_PAGE")
             }
@@ -135,7 +134,7 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
             }
             LceNewsfeedState.ERROR_NEXT_PAGE_LOADING -> {
                 mSwipeRefreshLayout.isEnabled = true
-                mAdapter.replaceLastItem(VKNewsfeed().apply { type = LceState.ERROR.name })
+                mAdapter.replaceLastItem(NewsfeedItemViewModel().apply { type = LceState.ERROR.name })
                 Log.d(TAG, "ERROR_NEXT_PAGE_LOADING")
             }
             LceNewsfeedState.ERROR -> {
@@ -147,7 +146,7 @@ class NewsfeedFragment : BaseFragment(), NewsfeedAdapter.RepeatButtonClickListen
         }
     }
 
-    private fun onDataReceive(data: List<VKNewsfeed>?) {
+    private fun onDataReceive(data: List<NewsfeedItemViewModel>?) {
         data?.let {
             mAdapter.changeDataSet(data)
         }

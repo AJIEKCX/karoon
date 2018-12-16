@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import com.example.ajiekc.karoon.R
 import com.example.ajiekc.karoon.extensions.*
+import com.example.ajiekc.karoon.repository.SessionRepository
 import com.example.ajiekc.karoon.ui.base.BaseFragment
 import com.example.ajiekc.karoon.ui.main.MainActivity
 import com.facebook.CallbackManager
@@ -95,7 +96,7 @@ class AuthFragment : BaseFragment() {
 
     private fun onAuthSuccess() {
         val preferences = PreferenceHelper.defaultPrefs(activity!!)
-        preferences[PreferenceHelper.AUTH_PREF] = true
+        preferences[SessionRepository.AUTH_PREF] = true
         mViewModel.navigateToNewsfeed()
     }
 

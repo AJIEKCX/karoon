@@ -10,12 +10,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.ajiekc.karoon.LceState
 import com.example.ajiekc.karoon.R
-import com.example.ajiekc.karoon.entity.VKNewsfeed
+import com.example.ajiekc.karoon.extensions.DateFormat
+import com.example.ajiekc.karoon.extensions.format
+import com.example.ajiekc.karoon.extensions.hide
 import com.example.ajiekc.karoon.extensions.loadRoundedImage
+import com.example.ajiekc.karoon.ui.auth.AuthType
 import com.example.ajiekc.karoon.widget.BaseRecyclerAdapter
 import com.squareup.picasso.Picasso
 
-class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAdapter.RepositoryHolder, VKNewsfeed>(items) {
+class NewsfeedAdapter(items: List<NewsfeedItemViewModel>) : BaseRecyclerAdapter<NewsfeedAdapter.RepositoryHolder, NewsfeedItemViewModel>(items) {
 
     private var mListener: RepeatButtonClickListener? = null
 
@@ -24,15 +27,30 @@ class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAda
     class RepositoryItemHolder(val view: View) : RepositoryHolder(view) {
         private val userNameView: TextView = view.findViewById(R.id.user_name)
         private val postTextView: TextView = view.findViewById(R.id.post_text)
+        private val dateTextView: TextView = view.findViewById(R.id.tv_date)
         private val likesTextView: TextView = view.findViewById(R.id.tv_likes)
         private val commentsTextView: TextView = view.findViewById(R.id.tv_comments)
         private val repostsTextView: TextView = view.findViewById(R.id.tv_reposts)
         private val userAvatarView: ImageView = view.findViewById(R.id.user_avatar)
+        private val socialTypeView: ImageView = view.findViewById(R.id.social_type)
         private val postImageView: ImageView = view.findViewById(R.id.post_image)
 
-        fun bind(item: VKNewsfeed) {
+        fun bind(item: NewsfeedItemViewModel) {
             userNameView.text = item.authorName
-            Picasso.get().loadRoundedImage(item.authorPhotoUrl, userAvatarView, R.drawable.ic_user)
+            dateTextView.text = item.date.format(DateFormat.D_MMMM_HH_MM)
+            if (item.socialType == AuthType.GOOGLE.name) {
+                Picasso.get().loadRoundedImage(item.authorPhotoUrl, userAvatarView, R.drawable.ic_user)
+                socialTypeView.setImageResource(R.drawable.ic_youtube)
+                likesTextView.hide()
+                commentsTextView.hide()
+                repostsTextView.hide()
+            } else {
+                Picasso.get().loadRoundedImage(item.authorPhotoUrl, userAvatarView, R.drawable.ic_user)
+                socialTypeView.setImageResource(R.drawable.ic_vk_blue)
+                likesTextView.text = item.likes.toString()
+                commentsTextView.text = item.comments.toString()
+                repostsTextView.text = item.reposts.toString()
+            }
             if (item.text.isNotEmpty()) {
                 postTextView.visibility = View.VISIBLE
                 postTextView.text = item.text
@@ -48,9 +66,6 @@ class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAda
             } else {
                 postImageView.visibility = View.GONE
             }
-            likesTextView.text = item.likes.toString()
-            commentsTextView.text = item.comments.toString()
-            repostsTextView.text = item.reposts.toString()
         }
     }
 
@@ -91,7 +106,7 @@ class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAda
             }
         }
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_vk_news, parent, false)
+            .inflate(R.layout.item_newsfeed, parent, false)
         return RepositoryItemHolder(view)
     }
 
@@ -99,8 +114,8 @@ class NewsfeedAdapter(items: List<VKNewsfeed>) : BaseRecyclerAdapter<NewsfeedAda
         super.onBindViewHolder(holder, position)
         when (getItemViewType(position)) {
             LceState.CONTENT.ordinal -> {
-                val user = getItem(position)
-                (holder as RepositoryItemHolder).bind(user)
+                val item = getItem(position)
+                (holder as RepositoryItemHolder).bind(item)
             }
             LceState.ERROR.ordinal -> {
                 (holder as RepositoryErrorHolder).setRepeatButtonClickListener(mListener)

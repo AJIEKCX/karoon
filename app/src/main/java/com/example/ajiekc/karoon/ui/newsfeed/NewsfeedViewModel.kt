@@ -2,7 +2,6 @@ package com.example.ajiekc.karoon.ui.newsfeed
 
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import com.example.ajiekc.karoon.entity.VKNewsfeed
 import com.example.ajiekc.karoon.repository.NewsfeedRepository
 import com.example.ajiekc.karoon.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,7 +14,7 @@ class NewsfeedViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val viewState: MutableLiveData<NewsfeedViewState> = MutableLiveData()
-    var dataSet = mutableListOf<VKNewsfeed>()
+    var dataSet = mutableListOf<NewsfeedItemViewModel>()
 
     fun viewState(): MutableLiveData<NewsfeedViewState> {
         return viewState
@@ -31,11 +30,13 @@ class NewsfeedViewModel @Inject constructor(
     private fun loadData(reload: Boolean = false, startFrom: String? = null) {
         repository.loadNews(startFrom)
             .doOnSubscribe {
-                viewState.postValue(when {
-                    startFrom != null -> NewsfeedViewState.loadingNextPage()
-                    !reload -> NewsfeedViewState.initialLoading()
-                    else -> NewsfeedViewState.loading()
-                })
+                viewState.postValue(
+                    when {
+                        startFrom != null -> NewsfeedViewState.loadingNextPage()
+                        !reload -> NewsfeedViewState.initialLoading()
+                        else -> NewsfeedViewState.loading()
+                    }
+                )
             }
             .doOnSuccess {
                 if (startFrom != null) {

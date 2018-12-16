@@ -7,7 +7,6 @@ import kotlin.math.abs
 object VKNewsfeedMapper {
     fun map(resp: VKNewsfeedResponse.Response): List<VKNewsfeed> {
         return resp.items.map { newsfeed ->
-
             val nextFrom = resp.nextFrom
             val authorName: String
             val authorPhotoUrl: String
@@ -24,7 +23,7 @@ object VKNewsfeedMapper {
             VKNewsfeed(
                 postId = newsfeed.postId,
                 text = newsfeed.text ?: "",
-                date = newsfeed.date ?: 0,
+                date = (newsfeed.date ?: 0) * 1000,
                 photoUrl = newsfeed.attachments?.find { it.type == "photo" }?.photo?.photoUrl ?: "",
                 authorName = authorName,
                 authorPhotoUrl = authorPhotoUrl,

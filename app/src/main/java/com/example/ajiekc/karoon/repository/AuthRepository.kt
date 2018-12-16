@@ -18,10 +18,10 @@ import io.reactivex.Single
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
+    private val sessionRepository: SessionRepository,
     private val vkService: VKService,
     private val fbService: FBService,
     private val youtubeService: YoutubeService,
-    private val preferences: SharedPreferences,
     private val authDao: AuthDao
 ) {
     fun getAuthData(
@@ -49,6 +49,9 @@ class AuthRepository @Inject constructor(
         youtubeService.getAccessToken("authorization_code", "294611782255-a8rfjhnm0l2naa4b9qia69ig31okf0lv.apps.googleusercontent.com", "8JEQZaXXYiH2It069sr4JQsz", authCode)
             .map {
                 AuthData(AuthType.GOOGLE.name, account?.givenName, account?.familyName, account?.photoUrl.toString(), it.accessToken)
+                    .also { _ ->
+                        sessionRepository.setGoogleAccessToken(it.accessToken)
+                    }
             }
 
     fun getAuthData(type: AuthType): Maybe<AuthData> {
@@ -67,13 +70,5 @@ class AuthRepository @Inject constructor(
         return Completable.fromCallable {
             authDao.delete(type.name)
         }
-    }
-
-    fun isAuthorized(): Boolean {
-        return preferences[PreferenceHelper.AUTH_PREF, false]
-    }
-
-    fun setAuthorized(flag: Boolean) {
-        preferences[PreferenceHelper.AUTH_PREF] = flag
     }
 }

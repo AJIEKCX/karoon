@@ -8,6 +8,9 @@ import com.squareup.picasso.Picasso
 import java.lang.Exception
 
 fun Picasso.loadRoundedImage(url: String?, imageView: ImageView, placeholder: Int) {
+    if (url.isNullOrEmpty()) {
+        return
+    }
     Picasso.get()
             .load(url)
             .fit()

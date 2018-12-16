@@ -5,6 +5,7 @@ import android.databinding.ObservableField
 import com.example.ajiekc.karoon.Screens
 import com.example.ajiekc.karoon.entity.AuthData
 import com.example.ajiekc.karoon.repository.AuthRepository
+import com.example.ajiekc.karoon.repository.SessionRepository
 import com.example.ajiekc.karoon.ui.auth.AuthType
 import com.example.ajiekc.karoon.ui.base.BaseViewModel
 import com.example.ajiekc.karoon.ui.common.SingleLiveEvent
@@ -17,7 +18,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(
-    private val repository: AuthRepository,
+    private val sessionRepository: SessionRepository,
+    private val authRepository: AuthRepository,
     private val router: Router
 ) : BaseViewModel() {
 
@@ -40,7 +42,7 @@ class ProfileViewModel @Inject constructor(
         account: GoogleSignInAccount? = null,
         authCode: String? = null
     ) {
-        repository.getAuthData(authType, accessToken, userId, account, authCode)
+        authRepository.getAuthData(authType, accessToken, userId, account, authCode)
             .doOnSubscribe { isLoading.set(true) }
             .doAfterTerminate { isLoading.set(false) }
             .subscribeOn(Schedulers.io())
@@ -56,7 +58,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun getLastAuthData() {
-        repository.getLastAuthData()
+        authRepository.getLastAuthData()
             .doOnSubscribe { isLoading.set(true) }
             .doAfterTerminate { isLoading.set(false) }
             .subscribeOn(Schedulers.io())
@@ -75,7 +77,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun changeProfile(type: AuthType) {
-        repository.getAuthData(type)
+        authRepository.getAuthData(type)
             .doOnSubscribe { isLoading.set(true) }
             .doAfterTerminate { isLoading.set(false) }
             .subscribeOn(Schedulers.io())
@@ -94,7 +96,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun logout(type: AuthType) {
-        repository.logout(type)
+        authRepository.logout(type)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
@@ -108,7 +110,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun logout() {
-        repository.setAuthorized(false)
+        sessionRepository.setAuthorized(false)
         router.newRootScreen(Screens.Auth)
     }
 

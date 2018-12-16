@@ -2,6 +2,7 @@ package com.example.ajiekc.karoon.di.module
 
 import com.example.ajiekc.karoon.api.fb.FBService
 import com.example.ajiekc.karoon.api.vk.VKService
+import com.example.ajiekc.karoon.api.youtube.AuthInterceptor
 import com.example.ajiekc.karoon.api.youtube.YoutubeService
 import com.example.ajiekc.karoon.di.provider.*
 import com.google.gson.Gson
@@ -32,5 +33,8 @@ class ServerModule : Module() {
         bind(YoutubeService::class.java)
             .toProvider(YoutubeServiceApiProvider::class.java)
             .providesSingletonInScope()
+
+        bind(AuthInterceptor::class.java)
+            .singletonInScope()
     }
 }

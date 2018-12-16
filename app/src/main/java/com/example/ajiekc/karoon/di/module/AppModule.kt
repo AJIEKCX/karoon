@@ -6,6 +6,7 @@ import com.example.ajiekc.karoon.di.provider.AuthDaoProvider
 import com.example.ajiekc.karoon.di.provider.DbProvider
 import com.example.ajiekc.karoon.repository.AuthRepository
 import com.example.ajiekc.karoon.repository.NewsfeedRepository
+import com.example.ajiekc.karoon.repository.SessionRepository
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -18,6 +19,7 @@ class AppModule : Module() {
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
         bind(AuthRepository::class.java).singletonInScope()
         bind(NewsfeedRepository::class.java).singletonInScope()
+        bind(SessionRepository::class.java).singletonInScope()
         bind(AppDatabase::class.java)
             .toProvider(DbProvider::class.java)
             .providesSingletonInScope()

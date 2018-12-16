@@ -11,7 +11,7 @@ class YoutubeServiceApiProvider @Inject constructor(
 ) : Provider<YoutubeService> {
     override fun get(): YoutubeService {
         return retrofit.newBuilder()
-            .baseUrl(BuildConfig.VK_ENDPOINT)
+            .baseUrl(BuildConfig.YOUTUBE_ENDPOINT)
             .build().run {
                 create(YoutubeService::class.java)
             }

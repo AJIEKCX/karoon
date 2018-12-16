@@ -7,8 +7,6 @@ object PreferenceHelper {
 
     const val DEFAULT_PREFERENCES = "default_preferences"
 
-    const val AUTH_PREF = "auth_pref"
-
     fun defaultPrefs(context: Context): SharedPreferences = customPrefs(context, DEFAULT_PREFERENCES)
 
     fun customPrefs(context: Context, name: String): SharedPreferences = context.getSharedPreferences(name, Context.MODE_PRIVATE)

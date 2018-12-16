@@ -24,6 +24,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "YOUTUBE_ENDPOINT", '"https://www.googleapis.com/youtube/v3/"'
         buildConfigField "String", "VK_ENDPOINT", '"https://api.vk.com/method/"'
         buildConfigField "String", "VK_VERSION_API", '"5.52"'
         buildConfigField "String", "FB_ENDPOINT", '"https://graph.facebook.com/v3.1/"'
