@@ -12,11 +12,6 @@ import com.example.ajiekc.karoon.databinding.FragmentProfileBinding
 import com.example.ajiekc.karoon.ui.auth.AuthType
 import com.example.ajiekc.karoon.ui.base.BaseFragment
 import com.example.ajiekc.karoon.ui.main.MainActivity
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -29,7 +24,6 @@ import com.vk.sdk.api.VKError
 import timber.log.Timber
 
 class ProfileFragment : BaseFragment() {
-    private lateinit var mFBCallbackManager: CallbackManager
     private var mGoogleSignInClient: GoogleApiClient? = null
 
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
@@ -54,7 +48,6 @@ class ProfileFragment : BaseFragment() {
         binding.vm = viewModel
 
         initObservers()
-        registerSdkCallbacks()
 
         return binding.root
     }
@@ -68,12 +61,6 @@ class ProfileFragment : BaseFragment() {
         })
     }
 
-    private fun registerSdkCallbacks() {
-
-        mFBCallbackManager = CallbackManager.Factory.create()
-        LoginManager.getInstance().registerCallback(mFBCallbackManager, FBAuthCallback())
-    }
-
     private fun onLoginButtonClick(type: String) {
         when (type) {
             AuthType.VK.name -> {
@@ -84,8 +71,6 @@ class ProfileFragment : BaseFragment() {
                 intent.putExtra("arg4", VKSdk.isCustomInitialize())
                 startActivityForResult(intent, VKServiceActivity.VKServiceType.Authorization.outerCode)
             }
-            AuthType.FB.name -> LoginManager.getInstance()
-                .logInWithReadPermissions(this, arrayListOf("public_profile"))
             AuthType.GOOGLE.name -> signIn()
         }
     }
@@ -108,9 +93,6 @@ class ProfileFragment : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Timber.d("onActivityResult")
         if (VKSdk.onActivityResult(requestCode, resultCode, data, VKAuthCallback())) {
-            return
-        }
-        if (mFBCallbackManager.onActivityResult(requestCode, resultCode, data)) {
             return
         }
         if (requestCode == RC_SIGN_IN) {
@@ -136,25 +118,9 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
-    inner class FBAuthCallback : FacebookCallback<LoginResult> {
-        override fun onSuccess(loginResult: LoginResult) {
-            Timber.d("onResult FB: ${loginResult.accessToken.token}")
-            viewModel.getUserData(AuthType.FB, loginResult.accessToken.token)
-        }
-
-        override fun onCancel() {
-            Timber.d("onCancel FB")
-        }
-
-        override fun onError(exception: FacebookException) {
-            Timber.e("onError FB")
-        }
-    }
-
     private fun logout(authType: String) {
         when (authType) {
             AuthType.VK.name -> VKSdk.logout()
-            AuthType.FB.name -> LoginManager.getInstance().logOut()
             AuthType.GOOGLE.name -> {
                 GoogleSignIn.getClient(context!!, GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .signOut()
